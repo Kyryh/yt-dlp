@@ -4726,6 +4726,9 @@ class YoutubeTabBaseInfoExtractor(YoutubeBaseInfoExtractor):
             title = traverse_obj(renderer, (
                 'flexColumns', 0, 'musicResponsiveListItemFlexColumnRenderer',
                 'text', 'runs', 0, 'text'))
+            thumbnails = traverse_obj(renderer, (
+                'thumbnail', 'musicThumbnailRenderer', 'thumbnail', 'thumbnails'
+            ))
             video_info = traverse_obj(renderer, (
                 'flexColumns', 1, 'musicResponsiveListItemFlexColumnRenderer',
                 'text', 'runs'
@@ -4744,7 +4747,7 @@ class YoutubeTabBaseInfoExtractor(YoutubeBaseInfoExtractor):
             return self.url_result(f'https://music.youtube.com/watch?v={video_id}',
                                    ie=YoutubeIE.ie_key(), video_id=video_id, title=title,
                                    authors=authors, album=album, video_duration=duration,
-                                   views=views)
+                                   views=views, thumbnails=thumbnails)
         playlist_id = traverse_obj(renderer, ('navigationEndpoint', 'watchEndpoint', 'playlistId'))
         if playlist_id:
             video_id = traverse_obj(renderer, ('navigationEndpoint', 'watchEndpoint', 'videoId'))
