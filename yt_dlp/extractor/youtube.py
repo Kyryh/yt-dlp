@@ -4733,21 +4733,25 @@ class YoutubeTabBaseInfoExtractor(YoutubeBaseInfoExtractor):
                 'flexColumns', 1, 'musicResponsiveListItemFlexColumnRenderer',
                 'text', 'runs'
             ))
-            authors = album = duration = views = None
+            authors = album = duration = views = date = None
             if video_info is not None:
-                authors = [author["text"] for author in video_info[:-4:2]]
+                if len(video_info) > 3:
+                    authors = [author["text"] for author in video_info[:-4:2]]
 
-                if "views" in video_info[-3]["text"]:
-                    views = video_info[-3]["text"]
+                    if "views" in video_info[-3]["text"]:
+                        views = video_info[-3]["text"]
+                    else:
+                        album = video_info[-3]["text"]
+
+                    duration = video_info[-1]["text"]
                 else:
-                    album = video_info[-3]["text"]
-
-                duration = video_info[-1]["text"]
+                    authors = video_info[-1]["text"]
+                    date = video_info[0]["text"]
 
             return self.url_result(f'https://music.youtube.com/watch?v={video_id}',
                                    ie=YoutubeIE.ie_key(), video_id=video_id, title=title,
                                    authors=authors, album=album, video_duration=duration,
-                                   views=views, thumbnails=thumbnails)
+                                   views=views, thumbnails=thumbnails, date=date)
         playlist_id = traverse_obj(renderer, ('navigationEndpoint', 'watchEndpoint', 'playlistId'))
         if playlist_id:
             video_id = traverse_obj(renderer, ('navigationEndpoint', 'watchEndpoint', 'videoId'))
